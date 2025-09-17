@@ -1,12 +1,7 @@
-from textnode import TextNode
-from textnode import TextType
+from textnode import TextNode, TextType
 
 def main():
-  b = TextNode('Test bold text', TextType.BOLD)
-  l = TextNode('Test Anchor Text', TextType.LINK, 'https://www.boot.dev')
-
-  print(b)
-  print(l)
+  print('TEST')
 
 
 if __name__ == "__main__":
