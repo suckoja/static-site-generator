@@ -1,6 +1,5 @@
 import unittest
 from textnode import TextNode, TextType
-
 class TextTextNode(unittest.TestCase):
   def test_eq(self):
     n1 = TextNode('Test bold text', TextType.BOLD)
