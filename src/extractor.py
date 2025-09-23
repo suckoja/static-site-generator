@@ -1,5 +1,29 @@
 import re
 
+def extract_markdown_between(text, substring1, substring2):
+    """
+    Extracts the substring between two specified characters in a given string.
+
+    Args:
+        text (str): The input string.
+        substring (str): The substring to check.
+
+    Returns:
+        str: The substring between char1 and char2, or an empty string if
+             either character is not found or if char2 appears before char1.
+    """
+    start_index = text.find(substring1)
+    if start_index == -1:
+        return None  # first substring not found
+    
+    content_start_index = start_index + len(substring1)
+
+    end_index = text.find(substring2, content_start_index)
+    if end_index == -1:
+        raise Exception("Invalid Markdown syntax")
+
+    return text[content_start_index:end_index]
+
 def extract_markdown_links(text):
     """
     Extract normal markdown links: [text](url)
