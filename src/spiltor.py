@@ -177,3 +177,11 @@ def text_to_textnodes(text):
         old_text = old_text.replace(old_text, "", 1)
   
   return new_nodes
+
+def markdown_to_blocks(markdown):
+  blocks = []
+  splits = markdown.split('\n\n')
+  for item in splits:
+    if item != "":
+      blocks.append(item.strip())
+  return blocks
