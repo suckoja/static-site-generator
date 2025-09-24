@@ -1,5 +1,7 @@
+import re
 from textnode import TextNode, TextType
 from extractor import extract_markdown_between,  extract_markdown_links, extract_markdown_images
+from blocktype import BlockType
 
 def get_target_texts(old_text, delimiter):
   targets = []
@@ -185,3 +187,18 @@ def markdown_to_blocks(markdown):
     if item != "":
       blocks.append(item.strip())
   return blocks
+
+def block_to_block_type(block):
+  block = block.strip()
+  if re.findall(r'^#{1,6}\s(.+)', block):
+    return BlockType.HEADING
+  elif re.findall(r"```(?:([a-zA-Z0-9]+)\n)?([\s\S]*?)```", block):
+    return BlockType.CODE
+  elif re.findall(r"\>\s(.+)", block):
+    return BlockType.QUOTE
+  elif re.findall(r"^[ \t]*[-*+][ \t]+(.*)", block):
+    return BlockType.UNORDERED_LIST
+  elif re.findall(r"^[ \t]*\d+\.[ \t]+(.*)", block):
+    return BlockType.ORDERED_LIST
+  else:
+    return BlockType.PARAGRAPH
