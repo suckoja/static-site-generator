@@ -1,6 +1,6 @@
 import re
 from textnode import TextNode, TextType
-from extractor import extract_markdown_between,  extract_markdown_links, extract_markdown_images
+from extractor import extract_markdown_between,  extract_markdown_links, extract_markdown_images, extract_markdown_ordered_lists
 from blocktype import BlockType
 
 def get_target_texts(old_text, delimiter):
@@ -202,3 +202,39 @@ def block_to_block_type(block):
     return BlockType.ORDERED_LIST
   else:
     return BlockType.PARAGRAPH
+  
+def split_markdown_unordered_list(markdown_text):
+    """
+    Splits a Markdown unordered list into a list of individual list items.
+    Handles nested lists by preserving their indentation.
+    """
+    lines = markdown_text.strip().split('\n')
+    list_items = []
+    current_item = []
+
+    for line in lines:
+        # Check if the line starts a new top-level list item
+        # or if it's a continuation of a previous item (e.g., a paragraph within an item)
+        # or a nested item.
+        if line.lstrip().startswith(('* ', '- ', '+ ')) and not current_item:
+            # Start a new item
+            current_item.append(line)
+        elif line.lstrip().startswith(('* ', '- ', '+ ')) and current_item:
+            # New list item, so append the previous one and start a new one
+            list_items.append('\n'.join(current_item))
+            current_item = [line]
+        elif current_item:
+            # Continuation of the current item (e.g., a multi-line paragraph or nested content)
+            current_item.append(line)
+        else:
+            # If it's not a list item and no item is being built, ignore or handle as non-list content
+            pass
+
+    # Append the last item if it exists
+    if current_item:
+        list_items.append('\n'.join(current_item))
+
+    return list_items
+
+def split_markdown_ordered_list(markdown_text):
+  return extract_markdown_ordered_lists(markdown_text)

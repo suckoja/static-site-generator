@@ -59,3 +59,49 @@ def extract_markdown_linked_images(text):
         }
         for image_md, href in matches
     ]
+
+def extract_markdown_ordered_lists(text):
+    list_item_pattern = re.compile(r'^\s*(\d+\.|[a-zA-Z]+\.)\s+(.*)', re.MULTILINE)
+    matches = list_item_pattern.findall(text)
+    return [
+        {
+            "type": "ordered_list",
+            "text": content
+        }
+        for prefix, content in matches
+    ]
+
+def extract_markdown_blockquote(text):
+    pattern = re.compile(r'^[ ]?>[ ]?(.*)', re.MULTILINE)
+
+    # Find all matches and join consecutive lines that belong to the same blockquote.
+    all_lines = pattern.findall(text)
+    blockquotes = []
+    current_quote = []
+
+    for line in all_lines:
+        if line.strip() == '':
+            # A blank line can indicate the end of a blockquote.
+            if current_quote:
+                blockquotes.append('\n'.join(current_quote))
+                current_quote = []
+        else:
+            current_quote.append(line)
+
+    # Append the last blockquote if it exists
+    if current_quote:
+        blockquotes.append('\n'.join(current_quote))
+
+    return blockquotes
+
+def extract_markdown_heading(text):
+    pattern = re.compile(r'^(#{1,6})\s(.*)', re.MULTILINE)
+    matches = pattern.findall(text)
+    return [
+        {
+            "type": "heading",
+            "level": len(marker),
+            "text": text,
+        }
+        for marker, text in matches
+    ]
